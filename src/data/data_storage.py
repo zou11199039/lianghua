@@ -3,7 +3,6 @@ import os
 import sqlite3
 import pandas as pd
 from datetime import datetime
-import json
 
 
 class DataStorage:
@@ -66,8 +65,9 @@ class DataStorage:
         filename = f"{stock_code}_{period}.parquet"
         file_path = os.path.join(self.data_path, filename)
 
-        # Normalize index: if DataFrame has a column named 'date' or 'time' that is more reliable,
-        # prefer using it as index for dedup/merge. Otherwise use existing index.
+        # Normalize index: if DataFrame has a column named 'date' or 'time'
+        # that is more reliable, prefer using it as index for dedup/merge.
+        # Otherwise use existing index.
         new_df = df.copy()
         try:
             # If 'date' column exists, set as index
@@ -92,7 +92,8 @@ class DataStorage:
             try:
                 existing = pd.read_parquet(file_path)
 
-                # Normalize indexes to DatetimeIndex where possible to avoid mixed-type comparison
+                # Normalize indexes to DatetimeIndex where possible
+                # to avoid mixed-type comparison
                 def try_normalize_index(df):
                     idx = df.index
                     # Try parse from epoch ms
@@ -137,7 +138,8 @@ class DataStorage:
                 existing = try_normalize_index(existing)
                 new_df = try_normalize_index(new_df)
 
-                # If still different types, coerce both to string to avoid type comparison issues
+                # If still different types, coerce both to string
+                # to avoid type comparison issues
                 if existing.index.dtype != new_df.index.dtype:
                     existing.index = existing.index.astype(str)
                     new_df.index = new_df.index.astype(str)
@@ -163,7 +165,8 @@ class DataStorage:
         # Write back
         merged.to_parquet(file_path, engine="pyarrow")
         print(
-            f"Saved {len(merged)} records (+{inserted} new) for {stock_code} to {file_path}"
+            f"Saved {len(merged)} records (+{inserted} new) "
+            f"for {stock_code} to {file_path}"
         )
         return int(inserted)
 
@@ -183,7 +186,15 @@ class DataStorage:
 
         cursor.execute(
             """
-        INSERT INTO trade_logs (timestamp, code, action, price, volume, strategy_name, remark)
+        INSERT INTO trade_logs (
+            timestamp,
+            code,
+            action,
+            price,
+            volume,
+            strategy_name,
+            remark
+        )
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
             (

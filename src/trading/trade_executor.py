@@ -101,7 +101,8 @@ class TradeExecutor:
 
         if drawdown > self.max_drawdown:
             print(
-                f"RISK ALERT: Max drawdown reached ({drawdown*100:.2f}%). Trading halted."
+                f"RISK ALERT: Max drawdown reached ({drawdown*100:.2f}%). "
+                "Trading halted."
             )
             return False
 

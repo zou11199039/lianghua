@@ -28,9 +28,11 @@ class SimpleBacktester:
         self.slippage = slippage
 
     def run(self, price_df: pd.DataFrame, signal: pd.Series) -> BacktestResult:
-        """price_df must contain columns: open, high, low, close and have DatetimeIndex.
-        signal is a series aligned with index with values in {0,1} (long or flat)
-        We assume for simplicity: when signal changes from 0->1 we buy at next open price, on 1->0 we sell at next open price.
+        """Run a backtest on daily data.
+
+        price_df must contain columns: open, high, low, close and have a DatetimeIndex.
+        signal is a Series aligned with the index with values in {0,1} (long or flat).
+        For simplicity: 0->1 buys at the next open; 1->0 sells at the next open.
         """
         df = price_df.copy().sort_index()
         s = signal.reindex(df.index).fillna(0).astype(int)
@@ -42,9 +44,9 @@ class SimpleBacktester:
 
         for i, idx in enumerate(df.index):
             row = df.loc[idx]
-            next_open = row[
-                "open"
-            ]  # use today's open as execution (detailed simulation could use next day's open)
+            next_open = row["open"]
+            # use today's open as execution
+            # detailed simulation could use next day's open
 
             cur_signal = s.loc[idx]
             # Entry

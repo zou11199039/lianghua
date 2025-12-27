@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""ReceiptListener: polls trader for order receipts and forwards them to OrderManager."""
+"""ReceiptListener: polls trader for order receipts.
+
+Forwards normalized receipts to an OrderManager instance.
+"""
+
 import threading
 import time
 import logging
@@ -12,9 +16,11 @@ class ReceiptListener:
     def __init__(self, trader, poll_interval: float = 1.0, fetch_func: Callable = None):
         """Create a ReceiptListener.
 
-        - trader: the trade executor or underlying trader which may provide query methods
+        - trader: the trade executor or underlying trader which may provide
+          query methods
         - poll_interval: seconds between polls
-        - fetch_func: optional callable to fetch pending receipts; signature -> List[(order_id, status, info)]
+        - fetch_func: optional callable to fetch pending receipts; signature ->
+          List[(order_id, status, info)]
         """
         self.trader = trader
         self.poll_interval = float(poll_interval)
@@ -24,7 +30,9 @@ class ReceiptListener:
         self.fetch_func = fetch_func
 
     def _default_fetch(self):
-        """Default fetch strategy: if trader exposes "query_pending_order_receipts", call it."""
+        """Default fetch strategy: if trader exposes
+        "query_pending_order_receipts", call it.
+        """
         try:
             if hasattr(self.trader, "query_pending_order_receipts"):
                 return self.trader.query_pending_order_receipts()
@@ -72,7 +80,8 @@ class ReceiptListener:
                         if om and hasattr(om, "handle_receipt"):
                             om.handle_receipt(order_id, status, info)
                         else:
-                            # if trader itself handles receipts via callback, emit through trader
+                            # if trader itself handles receipts via callback,
+                            # emit through trader
                             try:
                                 if hasattr(self.trader, "_emit_receipt"):
                                     self.trader._emit_receipt(order_id, status, info)

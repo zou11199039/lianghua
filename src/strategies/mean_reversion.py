@@ -4,7 +4,11 @@ import pandas as pd
 
 
 class MeanReversionStrategy(StrategyBase):
-    """基于 z-score 的均值回归：当价格/均线 z-score 超出上阈值，开反向仓位（此实现为做空信号的反向-但因 A 股不可做空，这里产生空仓=0，长/平策略简化为：当价格低于均值超过阈值，买入；高于均值超过阈值，平仓）。"""
+    """基于 z-score 的均值回归策略。
+
+    当价格与均线的 z-score 超出阈值时产生信号。
+    由于 A 股不可做空，此策略采用长/平逻辑：价格低于均值超过阈值时买入，价格高于均值超过阈值时平仓。
+    """
 
     def __init__(self, window=20, z_entry=1.5, z_exit=0.5, name=None):
         super().__init__(

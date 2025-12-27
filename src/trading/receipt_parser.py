@@ -11,7 +11,8 @@ def _status_map(s: str) -> str:
     if s is None:
         return "unknown"
 
-    # numeric codes mapping (heuristic for some brokers): accept ints, floats, and numeric strings
+    # Numeric codes mapping (heuristic for some brokers).
+    # Accept ints, floats, and numeric strings.
     try:
         mapping = {0: "rejected", 1: "filled", 2: "partial", 3: "canceled", 4: "failed"}
         if isinstance(s, (int, float)):

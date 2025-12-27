@@ -28,8 +28,10 @@ class RiskManager:
         - trader: object exposing get_assets() -> object with .total_asset
         - storage: optional DB/storage to persist risk decisions
         - max_drawdown: fraction (e.g., 0.2 for 20%)
-        - max_position_pct: maximum fraction of equity allowed per symbol
-        - max_position_per_symbol: absolute share quantity limit per symbol
+        - max_position_pct: maximum fraction of equity allowed
+          per symbol
+        - max_position_per_symbol: absolute share quantity limit
+          per symbol
         """
         self.trader = trader
         self.storage = storage
@@ -65,7 +67,6 @@ class RiskManager:
         """
         code = signal.get("code")
         vol = int(signal.get("volume", 0))
-        typ = signal.get("signal_type", "").upper()
 
         # Basic checks
         if vol <= 0:
@@ -87,17 +88,20 @@ class RiskManager:
         if order_value / equity > self.max_position_pct:
             return False, "exceeds_position_pct"
 
-        # drawdown check: simulate instant change in equity if needed (conservative: do not allow if drawdown already exceeded)
+        # Drawdown check.
+        # Conservative: do not allow orders when drawdown already exceeded.
         current_equity = self.get_current_equity()
-        if self.initial_equity and current_equity / self.initial_equity < (
-            1 - self.max_drawdown
-        ):
-            return False, "max_drawdown_exceeded"
+        if self.initial_equity:
+            if current_equity / self.initial_equity < (1 - self.max_drawdown):
+                return False, "max_drawdown_exceeded"
 
         return True, "ok"
 
     def apply_trade_effect(self, code: str, qty: int):
-        """Apply a matched fill to internal positions tracking (qty positive for buy)."""
+        """Apply a matched fill to internal positions tracking.
+
+        qty is positive for a buy.
+        """
         self.positions[code] = self.positions.get(code, 0) + int(qty)
         logger.info(f"Position updated: {code} -> {self.positions[code]}")
 

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import sys
-import os
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -12,13 +11,13 @@ from PyQt6.QtWidgets import (
     QLabel,
     QGroupBox,
     QTableWidget,
-    QTableWidgetItem,
 )
-from PyQt6.QtCore import QTimer, Qt, QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal
 from datetime import datetime
 
 # Import backend modules
-# (Assuming main.py sets up paths correctly, or we use relative imports if run as module)
+# (Assuming main.py sets up paths correctly,
+# or we use relative imports if run as module)
 
 
 class WorkerThread(QThread):

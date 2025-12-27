@@ -1,4 +1,3 @@
-import pytest
 from src.trading.receipt_parser import parse_receipt
 
 

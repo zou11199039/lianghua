@@ -6,7 +6,6 @@ import json
 import logging
 import os
 from logging.handlers import RotatingFileHandler
-from typing import Optional
 
 from src.data.data_storage import DataStorage
 from src.data.data_provider import DataProvider
@@ -201,7 +200,8 @@ class App:
 
         except Exception:
             self.logger.warning(
-                f"Could not import configured strategy module for '{name}', falling back to TopGainerStrategy"
+                f"Could not import configured strategy module for '{name}', "
+                "falling back to TopGainerStrategy"
             )
 
         if not self.strategy:

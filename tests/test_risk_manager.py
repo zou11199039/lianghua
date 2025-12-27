@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pytest
 from src.risk.risk_manager import RiskManager
 
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pytest
 from src.trading.order_manager import OrderManager
 
 

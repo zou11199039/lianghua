@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""OrderManager handles signal submission, retries, paper-mode simulation and simple compensation logic."""
+"""OrderManager handles signal submission and retries.
+
+Also supports paper-mode simulation and simple compensation logic.
+"""
 import time
 import uuid
 import logging
@@ -35,7 +38,10 @@ class OrderManager:
         return oid
 
     def submit_signal(self, signal: dict) -> Optional[str]:
-        """Submit a signal, handle risk checks, retries and risk halts. Returns order_id or None on failure."""
+        """Submit a signal and handle risk checks, retries and halts.
+
+        Returns an order_id or None on failure.
+        """
         # Risk check (if attached)
         rm = getattr(self, "risk_manager", None)
         if rm:
@@ -67,7 +73,8 @@ class OrderManager:
                 # xt trader returns 'RISK_HALT' or some id
                 if oid == "RISK_HALT" or not oid:
                     logger.warning(
-                        f"Order rejected by risk manager or empty id on attempt {attempt}: {oid}"
+                        f"Order rejected or empty id on attempt {attempt}: "
+                        f"{oid}"
                     )
                     return "RISK_HALT"
                 logger.info(f"Order placed: {oid} (attempt {attempt})")
@@ -80,7 +87,9 @@ class OrderManager:
                 return oid
             except Exception as e:
                 last_exc = e
-                logger.exception(f"Order submission failed on attempt {attempt}: {e}")
+                logger.exception(
+                    f"Order submission failed on attempt {attempt}: {e}"
+                )
                 attempt += 1
                 if attempt > self.max_retries:
                     break

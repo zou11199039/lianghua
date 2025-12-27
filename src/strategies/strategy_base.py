@@ -25,7 +25,11 @@ class StrategyBase(ABC):
 
     @abstractmethod
     def generate_signals(self, price_df):
-        """Batch-style API for backtesting: given a price DataFrame, return a Series of 0/1 signals aligned with price_df.index."""
+        """Batch-style API for backtesting.
+
+        Given a price DataFrame, return a Series of 0/1 signals
+        aligned with price_df.index.
+        """
         raise NotImplementedError
 
     def log(self, message):

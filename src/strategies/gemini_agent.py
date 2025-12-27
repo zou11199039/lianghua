@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
 
 # Make the optional dependency on google.generativeai lazy so test collection
 # and environments without the package installed don't fail on import.
@@ -13,13 +12,15 @@ except Exception:
 
 
 class GeminiAgent:
+
     def __init__(self, api_key=None, model_name="gemini-2.0-flash-exp"):
         if not _HAS_GENAI:
             # Keep object usable but LLM calls will return None and warn.
             self.model = None
             if api_key:
                 print(
-                    "Warning: 'google.generativeai' not installed. Gemini features unavailable."
+                    "Warning: 'google.generativeai' not installed. "
+                    "Gemini features unavailable."
                 )
             return
 
@@ -28,7 +29,10 @@ class GeminiAgent:
             self.model = genai.GenerativeModel(model_name)
         else:
             self.model = None
-            print("Warning: Gemini API Key not provided. LLM features disabled.")
+            print(
+                "Warning: Gemini API Key not provided. "
+                "LLM features disabled."
+            )
 
     def analyze_market(self, news_text, market_data_summary):
         """
@@ -38,23 +42,24 @@ class GeminiAgent:
             return None
 
         prompt = f"""
-        You are a senior quantitative trader. Analyze the following A-share market data and news.
-        
+        You are a senior quantitative trader.
+        Analyze the following market data and recent news.
+
         [Market Data Summary]
         {market_data_summary}
-        
-        [Recent News]
+
+[Recent News]
         {news_text}
-        
+
         Task:
         1. Analyze the sentiment (Bullish/Bearish/Neutral).
         2. Identify top 3 potential sectors or stocks.
         3. Provide a risk score (0-10, 10 is highest risk).
-        
-        Output format (JSON):
+
+Output format (JSON):
         {{
             "sentiment": "...",
-            "top_picks": ["List of stocks/sectors"],
+            "top_picks": ["stocks/sectors"],
             "risk_score": 5,
             "reasoning": "..."
         }}
@@ -62,8 +67,11 @@ class GeminiAgent:
 
         try:
             response = self.model.generate_content(prompt)
-            # Simple cleanup to ensure JSON parsing if model outputs markdown code blocks
-            text = response.text.replace("```json", "").replace("```", "").strip()
+            # Simple cleanup to ensure JSON parsing
+            # if model outputs markdown code blocks
+            text = (
+                response.text.replace("```json", "").replace("```", "").strip()
+            )
             return text
         except Exception as e:
             print(f"Gemini API Error: {e}")

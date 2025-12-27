@@ -94,7 +94,8 @@ class QMTClient:
         self._xtdata = xtdata_module
         if self._xtdata is None:
             logger.warning(
-                "xtquant.xtdata not available; inject an xtdata_module to use data methods in tests or in environments without xtquant installed."
+                "xtquant.xtdata not available; inject an xtdata_module to use data"
+                " methods in tests or in environments without xtquant installed."
             )
         self._retry = max(0, int(retry))
         self._retry_delay = float(retry_delay)

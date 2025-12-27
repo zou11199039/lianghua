@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from xtquant import xtdata
 from .data_storage import DataStorage
-import pandas as pd
 import logging
 
 logger = logging.getLogger("data_provider")

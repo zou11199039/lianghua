@@ -7,8 +7,9 @@ import pandas as pd
 
 def ma_crossover_signal(df: pd.DataFrame, short: int = 5, long: int = 20) -> pd.Series:
     df = df.copy()
-    df[f"ma_s"] = df["close"].rolling(short, min_periods=1).mean()
-    df[f"ma_l"] = df["close"].rolling(long, min_periods=1).mean()
+    df["ma_s"] = df["close"].rolling(short, min_periods=1).mean()
+    df["ma_l"] = df["close"].rolling(long, min_periods=1).mean()
     signal = (df["ma_s"] > df["ma_l"]).astype(int)
-    # ensure signal is forward-looking by shifting 0 (we execute at open same day for simplicity)
+    # Ensure the signal is forward-looking by shifting if needed.
+    # (Here we execute at the open same day for simplicity.)
     return signal

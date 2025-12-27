@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from .strategy_base import StrategyBase
 from .gemini_agent import GeminiAgent
-import pandas as pd
 import json
 
 
@@ -53,12 +52,13 @@ class TopGainerStrategy(StrategyBase):
                 self.log(f"Gemini Analysis: {analysis_json}")
                 try:
                     analysis = json.loads(analysis_json)
-                    # Filter based on LLM opinion
-                    # (Simplified logic: taking top 2 from quant list if sentiment is bullish)
+                    # Filter based on LLM opinion.
+                    # Simplified logic: take top 2 from quant list
+                    # if sentiment is bullish.
                     if "Bullish" in analysis.get("sentiment", ""):
                         top_candidates = top_candidates[:3]
-                except:
-                    pass
+                except Exception as e:
+                    self.log(f"Error parsing Gemini analysis: {e}")
 
         # 3. Generate Signals
         for item in top_candidates:
@@ -76,7 +76,10 @@ class TopGainerStrategy(StrategyBase):
         return signals
 
     def generate_signals(self, price_df):
-        """Simple batch API to satisfy StrategyBase: return Series of 0/1 based on 5-day momentum."""
+        """Simple batch API to satisfy StrategyBase.
+
+        Return a Series of 0/1 based on 5-day momentum.
+        """
         import pandas as pd
 
         if price_df is None or price_df.empty:

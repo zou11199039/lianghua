@@ -19,11 +19,16 @@ class Scheduler:
         self._tasks = []
         if not _HAS_SCHEDULE:
             warnings.warn(
-                "Optional dependency 'schedule' not found. Scheduler will accept jobs but will only run a simple loop."
+                "Optional dependency 'schedule' not found. "
+                "Scheduler will accept jobs but will only run a simple loop."
             )
 
     def add_daily_job(self, time_str, job_func, *args):
-        """Register a job to run daily at the given HH:MM. If 'schedule' library is available it will be used; otherwise the job is stored and will run approximately when time matches."""
+        """Register a job to run daily at the given HH:MM.
+
+        If 'schedule' is available, it will be used; otherwise the job is stored
+        and will run approximately when time matches.
+        """
         if _HAS_SCHEDULE:
             schedule.every().day.at(time_str).do(job_func, *args)
         else:
