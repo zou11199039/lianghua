@@ -5,7 +5,8 @@ import time
 import logging
 from typing import Callable
 
-logger = logging.getLogger('quant_app.receipt_listener')
+logger = logging.getLogger("quant_app.receipt_listener")
+
 
 class ReceiptListener:
     def __init__(self, trader, poll_interval: float = 1.0, fetch_func: Callable = None):
@@ -25,7 +26,7 @@ class ReceiptListener:
     def _default_fetch(self):
         """Default fetch strategy: if trader exposes "query_pending_order_receipts", call it."""
         try:
-            if hasattr(self.trader, 'query_pending_order_receipts'):
+            if hasattr(self.trader, "query_pending_order_receipts"):
                 return self.trader.query_pending_order_receipts()
             # If trader has simulate_receipt generator for tests, do nothing here
         except Exception as e:
@@ -42,13 +43,18 @@ class ReceiptListener:
                     receipts = self._default_fetch()
 
                 from src.trading.receipt_parser import parse_receipt
+
                 for raw in receipts:
                     try:
                         # receipts may be in various shapes; normalize
                         parsed = None
                         # If fetch returns tuples (order_id, status, info) use directly
                         if isinstance(raw, tuple) and len(raw) >= 2:
-                            parsed = (str(raw[0]), str(raw[1]), raw[2] if len(raw) >= 3 else None)
+                            parsed = (
+                                str(raw[0]),
+                                str(raw[1]),
+                                raw[2] if len(raw) >= 3 else None,
+                            )
                         else:
                             # try parser
                             parsed = parse_receipt(raw)
@@ -60,13 +66,15 @@ class ReceiptListener:
                         order_id, status, info = parsed
 
                         # forward to order manager if present
-                        om = getattr(self.trader, 'order_manager', None) or getattr(self.trader, 'orderMgr', None)
-                        if om and hasattr(om, 'handle_receipt'):
+                        om = getattr(self.trader, "order_manager", None) or getattr(
+                            self.trader, "orderMgr", None
+                        )
+                        if om and hasattr(om, "handle_receipt"):
                             om.handle_receipt(order_id, status, info)
                         else:
                             # if trader itself handles receipts via callback, emit through trader
                             try:
-                                if hasattr(self.trader, '_emit_receipt'):
+                                if hasattr(self.trader, "_emit_receipt"):
                                     self.trader._emit_receipt(order_id, status, info)
                             except Exception:
                                 pass

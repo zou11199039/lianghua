@@ -2,20 +2,25 @@
 import pandas as pd
 from xtquant import xtdata
 
+
 class DataLoader:
     def __init__(self):
         print("Initializing DataLoader...")
 
-    def download_data(self, stock_list, period='1d', start_time='', end_time='', count=-1):
+    def download_data(
+        self, stock_list, period="1d", start_time="", end_time="", count=-1
+    ):
         """
         Download historical data to local cache.
         """
         print(f"Downloading data for {len(stock_list)} stocks...")
         for stock_code in stock_list:
-            xtdata.download_history_data(stock_code, period=period, start_time=start_time, end_time=end_time)
+            xtdata.download_history_data(
+                stock_code, period=period, start_time=start_time, end_time=end_time
+            )
         print("Download complete.")
 
-    def get_kline(self, stock_list, period='1d', start_time='', end_time='', count=-1):
+    def get_kline(self, stock_list, period="1d", start_time="", end_time="", count=-1):
         """
         Get K-line data as a Dictionary of DataFrames.
         """
@@ -26,8 +31,8 @@ class DataLoader:
             start_time=start_time,
             end_time=end_time,
             count=count,
-            dividend_type='none',
-            fill_data=True
+            dividend_type="none",
+            fill_data=True,
         )
         return data
 
@@ -37,7 +42,7 @@ class DataLoader:
         """
         return xtdata.get_full_tick(stock_list)
 
-    def get_sector_list(self, sector_name='沪深A股'):
+    def get_sector_list(self, sector_name="沪深A股"):
         """
         Get stock list for a specific sector.
         """

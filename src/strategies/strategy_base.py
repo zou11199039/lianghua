@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from abc import ABC, abstractmethod
 
+
 class StrategyBase(ABC):
     def __init__(self, strategy_name, config_params):
         self.strategy_name = strategy_name

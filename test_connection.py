@@ -7,9 +7,9 @@ print("Testing QMT Environment...")
 # Test Data
 print("\n1. Testing XtData...")
 try:
-    code = '600000.SH'
-    xtdata.download_history_data(code, period='1d')
-    data = xtdata.get_market_data_ex([], [code], period='1d', count=5)
+    code = "600000.SH"
+    xtdata.download_history_data(code, period="1d")
+    data = xtdata.get_market_data_ex([], [code], period="1d", count=5)
     print(f"Data retrieved for {code}:")
     print(data[code])
 except Exception as e:

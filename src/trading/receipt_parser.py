@@ -9,17 +9,11 @@ from typing import Any, Tuple, Optional
 
 def _status_map(s: str) -> str:
     if s is None:
-        return 'unknown'
+        return "unknown"
 
     # numeric codes mapping (heuristic for some brokers): accept ints, floats, and numeric strings
     try:
-        mapping = {
-            0: 'rejected',
-            1: 'filled',
-            2: 'partial',
-            3: 'canceled',
-            4: 'failed'
-        }
+        mapping = {0: "rejected", 1: "filled", 2: "partial", 3: "canceled", 4: "failed"}
         if isinstance(s, (int, float)):
             return mapping.get(int(s), str(int(s)))
         # numeric string like '1' or ' 2 '
@@ -31,16 +25,16 @@ def _status_map(s: str) -> str:
         pass
 
     s_norm = str(s).strip().lower()
-    if s_norm in ('filled', 'fill', 'filled_all', 'allfilled', 'filled_all'):
-        return 'filled'
-    if s_norm in ('partial', 'partial_fill'):
-        return 'partial'
-    if s_norm in ('reject', 'rejected', 'refuse', 'rej'):
-        return 'rejected'
-    if s_norm in ('fail', 'failed', 'error'):
-        return 'failed'
-    if s_norm in ('cancel', 'canceled', 'cancelled'):
-        return 'canceled'
+    if s_norm in ("filled", "fill", "filled_all", "allfilled", "filled_all"):
+        return "filled"
+    if s_norm in ("partial", "partial_fill"):
+        return "partial"
+    if s_norm in ("reject", "rejected", "refuse", "rej"):
+        return "rejected"
+    if s_norm in ("fail", "failed", "error"):
+        return "failed"
+    if s_norm in ("cancel", "canceled", "cancelled"):
+        return "canceled"
     # fallback: return normalized string
     return s_norm
 
@@ -60,7 +54,18 @@ def parse_receipt(raw: Any) -> Optional[Tuple[str, str, Optional[dict]]]:
     # If it's a dict, try to extract common fields
     if isinstance(raw, dict):
         # common keys for order id
-        candidates = ['order_id', 'orderId', 'order_id', 'order_no', 'orderNo', 'orderno', 'orderNo', 'id', 'orderid', 'orderId']
+        candidates = [
+            "order_id",
+            "orderId",
+            "order_id",
+            "order_no",
+            "orderNo",
+            "orderno",
+            "orderNo",
+            "id",
+            "orderid",
+            "orderId",
+        ]
         order_id = None
         for k in candidates:
             if k in raw:
@@ -69,7 +74,7 @@ def parse_receipt(raw: Any) -> Optional[Tuple[str, str, Optional[dict]]]:
 
         # check nested structures commonly used by xtquant or broker callbacks
         if order_id is None:
-            for nest in ('order', 'data', 'body'):
+            for nest in ("order", "data", "body"):
                 if nest in raw and isinstance(raw[nest], dict):
                     for k in candidates:
                         if k in raw[nest]:
@@ -79,7 +84,14 @@ def parse_receipt(raw: Any) -> Optional[Tuple[str, str, Optional[dict]]]:
                         break
 
         # status keys
-        status_candidates = ['status', 'state', 'tradeStatus', 'order_status', 'statusCode', 'trade_status']
+        status_candidates = [
+            "status",
+            "state",
+            "tradeStatus",
+            "order_status",
+            "statusCode",
+            "trade_status",
+        ]
         status = None
         for k in status_candidates:
             if k in raw:
@@ -87,7 +99,7 @@ def parse_receipt(raw: Any) -> Optional[Tuple[str, str, Optional[dict]]]:
                 break
         # try nested status as well
         if status is None:
-            for nest in ('order', 'data', 'body'):
+            for nest in ("order", "data", "body"):
                 if nest in raw and isinstance(raw[nest], dict):
                     for k in status_candidates:
                         if k in raw[nest]:
@@ -97,14 +109,14 @@ def parse_receipt(raw: Any) -> Optional[Tuple[str, str, Optional[dict]]]:
                         break
 
         # map numeric codes or textual codes
-        status = _status_map(status) if status is not None else 'unknown'
+        status = _status_map(status) if status is not None else "unknown"
 
         # best-effort fallback: sometimes full JSON contains an 'orderno' inside strings
         if order_id is None:
             for v in raw.values():
                 try:
                     s = str(v)
-                    if 'ORD' in s or 'ord' in s:
+                    if "ORD" in s or "ord" in s:
                         # crude heuristic
                         order_id = s
                         break
@@ -118,7 +130,7 @@ def parse_receipt(raw: Any) -> Optional[Tuple[str, str, Optional[dict]]]:
 
     # If it's a simple string containing id:status
     if isinstance(raw, str):
-        if ':' in raw:
-            order_id, st = raw.split(':', 1)
+        if ":" in raw:
+            order_id, st = raw.split(":", 1)
             return order_id.strip(), _status_map(st.strip()), None
     return None

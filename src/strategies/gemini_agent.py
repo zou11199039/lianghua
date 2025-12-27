@@ -5,18 +5,22 @@ import time
 # and environments without the package installed don't fail on import.
 try:
     import google.generativeai as genai
+
     _HAS_GENAI = True
 except Exception:
     genai = None
     _HAS_GENAI = False
 
+
 class GeminiAgent:
-    def __init__(self, api_key=None, model_name='gemini-2.0-flash-exp'):
+    def __init__(self, api_key=None, model_name="gemini-2.0-flash-exp"):
         if not _HAS_GENAI:
             # Keep object usable but LLM calls will return None and warn.
             self.model = None
             if api_key:
-                print("Warning: 'google.generativeai' not installed. Gemini features unavailable.")
+                print(
+                    "Warning: 'google.generativeai' not installed. Gemini features unavailable."
+                )
             return
 
         if api_key:
@@ -55,11 +59,11 @@ class GeminiAgent:
             "reasoning": "..."
         }}
         """
-        
+
         try:
             response = self.model.generate_content(prompt)
             # Simple cleanup to ensure JSON parsing if model outputs markdown code blocks
-            text = response.text.replace('```json', '').replace('```', '').strip()
+            text = response.text.replace("```json", "").replace("```", "").strip()
             return text
         except Exception as e:
             print(f"Gemini API Error: {e}")

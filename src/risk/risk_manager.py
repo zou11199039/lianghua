@@ -6,14 +6,23 @@ from dataclasses import dataclass
 import logging
 from typing import Optional
 
-logger = logging.getLogger('quant_app.risk')
+logger = logging.getLogger("quant_app.risk")
+
 
 @dataclass
 class AssetSnapshot:
     total_asset: float
 
+
 class RiskManager:
-    def __init__(self, trader, storage=None, max_drawdown: float = 0.2, max_position_pct: float = 0.1, max_position_per_symbol: int = 100000):
+    def __init__(
+        self,
+        trader,
+        storage=None,
+        max_drawdown: float = 0.2,
+        max_position_pct: float = 0.1,
+        max_position_per_symbol: int = 100000,
+    ):
         """Initialize risk manager.
 
         - trader: object exposing get_assets() -> object with .total_asset
@@ -37,7 +46,7 @@ class RiskManager:
     def _get_total_asset(self) -> Optional[float]:
         try:
             assets = self.trader.get_assets()
-            if assets and hasattr(assets, 'total_asset'):
+            if assets and hasattr(assets, "total_asset"):
                 return float(assets.total_asset)
         except Exception:
             pass
@@ -54,36 +63,38 @@ class RiskManager:
 
         Returns (ok: bool, reason: str)
         """
-        code = signal.get('code')
-        vol = int(signal.get('volume', 0))
-        typ = signal.get('signal_type', '').upper()
+        code = signal.get("code")
+        vol = int(signal.get("volume", 0))
+        typ = signal.get("signal_type", "").upper()
 
         # Basic checks
         if vol <= 0:
-            return False, 'zero_volume'
+            return False, "zero_volume"
 
         # per-symbol hard limit
         existing = abs(self.positions.get(code, 0))
         if existing + vol > self.max_position_per_symbol:
-            return False, 'exceeds_symbol_limit'
+            return False, "exceeds_symbol_limit"
 
         # Check max position percent vs current equity, need an estimated price
-        price = float(signal.get('price', 0) or 0)
+        price = float(signal.get("price", 0) or 0)
         equity = self.get_current_equity() or self.initial_equity
         if equity <= 0:
-            return False, 'no_equity_info'
+            return False, "no_equity_info"
 
         # risk cash usage
         order_value = vol * price
         if order_value / equity > self.max_position_pct:
-            return False, 'exceeds_position_pct'
+            return False, "exceeds_position_pct"
 
         # drawdown check: simulate instant change in equity if needed (conservative: do not allow if drawdown already exceeded)
         current_equity = self.get_current_equity()
-        if self.initial_equity and current_equity / self.initial_equity < (1 - self.max_drawdown):
-            return False, 'max_drawdown_exceeded'
+        if self.initial_equity and current_equity / self.initial_equity < (
+            1 - self.max_drawdown
+        ):
+            return False, "max_drawdown_exceeded"
 
-        return True, 'ok'
+        return True, "ok"
 
     def apply_trade_effect(self, code: str, qty: int):
         """Apply a matched fill to internal positions tracking (qty positive for buy)."""

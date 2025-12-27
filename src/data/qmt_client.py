@@ -38,7 +38,11 @@ def is_qmt_running(process_name: str = "xt_trader.exe") -> bool:
         return False
 
 
-def ensure_qmt_started(shortcut_path: Optional[str] = None, process_name: str = "xt_trader.exe", timeout: int = 20) -> bool:
+def ensure_qmt_started(
+    shortcut_path: Optional[str] = None,
+    process_name: str = "xt_trader.exe",
+    timeout: int = 20,
+) -> bool:
     """如果 QMT 未运行，尝试通过快捷方式启动（如果提供），并等待直到可用或超时。
 
     在 Windows 上优先使用 `os.startfile` 打开快捷方式（适用于 .lnk 等）。
@@ -50,7 +54,7 @@ def ensure_qmt_started(shortcut_path: Optional[str] = None, process_name: str = 
     if shortcut_path and os.path.exists(shortcut_path):
         try:
             # 在 Windows 上更可靠的方式是 os.startfile
-            if os.name == 'nt':
+            if os.name == "nt":
                 os.startfile(shortcut_path)
             else:
                 subprocess.Popen([shortcut_path], shell=False)
@@ -89,7 +93,9 @@ class QMTClient:
         self.process_name = process_name
         self._xtdata = xtdata_module
         if self._xtdata is None:
-            logger.warning("xtquant.xtdata not available; inject an xtdata_module to use data methods in tests or in environments without xtquant installed.")
+            logger.warning(
+                "xtquant.xtdata not available; inject an xtdata_module to use data methods in tests or in environments without xtquant installed."
+            )
         self._retry = max(0, int(retry))
         self._retry_delay = float(retry_delay)
 
@@ -109,17 +115,37 @@ class QMTClient:
                 return func(*args, **kwargs)
             except Exception as e:
                 last_exc = e
-                logger.warning("xtdata.%s failed (attempt %d/%d): %s", func_name, i + 1, attempts, e)
+                logger.warning(
+                    "xtdata.%s failed (attempt %d/%d): %s",
+                    func_name,
+                    i + 1,
+                    attempts,
+                    e,
+                )
                 if i + 1 < attempts:
                     time.sleep(self._retry_delay)
         # raise the last exception for caller to handle
         raise last_exc
 
-    def download_history(self, code: str, period: str = "1d", start_time: str = "", end_time: str = ""):
+    def download_history(
+        self, code: str, period: str = "1d", start_time: str = "", end_time: str = ""
+    ):
         """调用 xtdata.download_history_data。"""
-        return self._call_xtdata("download_history_data", code, period=period, start_time=start_time, end_time=end_time)
+        return self._call_xtdata(
+            "download_history_data",
+            code,
+            period=period,
+            start_time=start_time,
+            end_time=end_time,
+        )
 
-    def get_market_data(self, stock_list: List[str], period: str = "1d", start_time: str = "", end_time: str = "") -> Dict[str, Any]:
+    def get_market_data(
+        self,
+        stock_list: List[str],
+        period: str = "1d",
+        start_time: str = "",
+        end_time: str = "",
+    ) -> Dict[str, Any]:
         return self._call_xtdata(
             "get_market_data_ex",
             field_list=[],
@@ -139,7 +165,9 @@ class QMTClient:
         if started:
             logger.info("QMT is running (process=%s)", self.process_name)
         else:
-            logger.warning("QMT did not start within %ss (process=%s)", timeout, self.process_name)
+            logger.warning(
+                "QMT did not start within %ss (process=%s)", timeout, self.process_name
+            )
         return started
 
     def __enter__(self):

@@ -5,6 +5,7 @@ from xtquant import xttrader
 from xtquant.xttype import StockAccount
 from xtquant import xtconstant
 
+
 class TradeManager:
     def __init__(self, account_id, mini_qmt_path):
         self.account_id = account_id
@@ -13,10 +14,9 @@ class TradeManager:
         self.xt_trader = xttrader.XtQuantTrader(mini_qmt_path, self.session_id)
         # Assuming STOCK account type for A-shares
         self.account = StockAccount(account_id)
-        
+
         # Callback for connection status
         self.xt_trader.register_callback(self)
-
 
     def connect(self):
         """
@@ -24,7 +24,7 @@ class TradeManager:
         """
         print(f"Connecting to MiniQMT with account: {self.account_id}...")
         self.xt_trader.start()
-        
+
         # Establishing connection
         connect_result = self.xt_trader.connect()
         if connect_result == 0:
@@ -40,7 +40,14 @@ class TradeManager:
             print(f"Connection failed with code: {connect_result}")
             return False
 
-    def buy(self, stock_code, price, volume, strategy_name='auto_strategy', order_remark='buy_order'):
+    def buy(
+        self,
+        stock_code,
+        price,
+        volume,
+        strategy_name="auto_strategy",
+        order_remark="buy_order",
+    ):
         """
         Place a buy order.
         """
@@ -48,15 +55,22 @@ class TradeManager:
         return self.xt_trader.order_stock(
             self.account,
             stock_code,
-            xtconstant.STOCK_BUY, 
+            xtconstant.STOCK_BUY,
             int(volume),
-            xtconstant.FIX_PRICE, 
+            xtconstant.FIX_PRICE,
             float(price),
             strategy_name,
-            order_remark
+            order_remark,
         )
 
-    def sell(self, stock_code, price, volume, strategy_name='auto_strategy', order_remark='sell_order'):
+    def sell(
+        self,
+        stock_code,
+        price,
+        volume,
+        strategy_name="auto_strategy",
+        order_remark="sell_order",
+    ):
         """
         Place a sell order.
         """
@@ -64,12 +78,12 @@ class TradeManager:
         return self.xt_trader.order_stock(
             self.account,
             stock_code,
-            xtconstant.STOCK_SELL, 
+            xtconstant.STOCK_SELL,
             int(volume),
-            xtconstant.FIX_PRICE, 
+            xtconstant.FIX_PRICE,
             float(price),
             strategy_name,
-            order_remark
+            order_remark,
         )
 
     def get_assets(self):
@@ -80,13 +94,13 @@ class TradeManager:
         if assets:
             print(f"Cash: {assets.cash}, Market Value: {assets.market_value}")
         return assets
-    
+
     def on_connected(self):
         """
         Callback when connected.
         """
         print("Callback: Connected to XtQuantTrader.")
-    
+
     def on_disconnected(self):
         """
         Callback when disconnected.
@@ -103,4 +117,6 @@ class TradeManager:
         """
         Callback for trade execution.
         """
-        print(f"Trade Executed: {trade.stock_code}, Price: {trade.traded_price}, Volume: {trade.traded_volume}")
+        print(
+            f"Trade Executed: {trade.stock_code}, Price: {trade.traded_price}, Volume: {trade.traded_volume}"
+        )

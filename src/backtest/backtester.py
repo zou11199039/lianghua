@@ -42,7 +42,9 @@ class SimpleBacktester:
 
         for i, idx in enumerate(df.index):
             row = df.loc[idx]
-            next_open = row['open']  # use today's open as execution (detailed simulation could use next day's open)
+            next_open = row[
+                "open"
+            ]  # use today's open as execution (detailed simulation could use next day's open)
 
             cur_signal = s.loc[idx]
             # Entry
@@ -64,7 +66,7 @@ class SimpleBacktester:
                     position = 0
 
             # mark-to-market equity
-            mkt_val = position * row['close']
+            mkt_val = position * row["close"]
             total_equity = cash + mkt_val
             equity.append((idx, total_equity))
 
@@ -74,7 +76,11 @@ class SimpleBacktester:
         returns = equity_idx.pct_change().fillna(0)
         total_return = equity_idx.iloc[-1] / equity_idx.iloc[0] - 1
         # approx annual return assuming 252 trading days per year
-        days = (equity_idx.index[-1] - equity_idx.index[0]).days if len(equity_idx.index) > 1 else 1
+        days = (
+            (equity_idx.index[-1] - equity_idx.index[0]).days
+            if len(equity_idx.index) > 1
+            else 1
+        )
         annual_return = (1 + total_return) ** (252 / max(days, 1)) - 1
         # max drawdown
         cum = (1 + returns).cumprod()
@@ -87,4 +93,11 @@ class SimpleBacktester:
         else:
             sharpe = (returns.mean() / returns.std()) * np.sqrt(252)
 
-        return BacktestResult(equity=equity_idx, returns=returns, total_return=float(total_return), annual_return=float(annual_return), max_drawdown=float(max_drawdown), sharpe=float(sharpe))
+        return BacktestResult(
+            equity=equity_idx,
+            returns=returns,
+            total_return=float(total_return),
+            annual_return=float(annual_return),
+            max_drawdown=float(max_drawdown),
+            sharpe=float(sharpe),
+        )
