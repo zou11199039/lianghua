@@ -1,0 +1,21 @@
+2025-12-26 23:19:59,581 INFO 确保 QMT 交易终端已运行（若未运行会尝试启动）...
+2025-12-26 23:20:21,239 WARNING 未检测到 QMT 终端运行，数据下载可能失败。请手动启动‘中航证券QMT实盘-交易端’并重试。
+2025-12-26 23:20:21,240 INFO 开始下载 1 支股票的历史数据...
+2025-12-26 23:20:21,240 INFO Downloading data for 1 stocks...
+2025-12-26 23:20:21,247 ERROR 下载过程中出现异常：'NoneType' object is not iterable
+Traceback (most recent call last):
+  File "D:\lianghua\scripts\download_history.py", line 57, in main
+    provider.download_data(codes, period=args.period, start_time=args.start, end_time=args.end)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\lianghua\src\data\data_provider.py", line 28, in download_data
+    data_dict = xtdata.get_market_data_ex(
+        field_list=[],
+    ...<4 lines>...
+        count=-1
+    )
+  File "D:\lianghua\.venv\Lib\site-packages\xtquant\xtdata.py", line 553, in get_market_data_ex
+    return _get_market_data_ex_ori_221207(field_list, stock_list, spec_period, start_time, end_time, count, dividend_type, fill_data)
+  File "D:\lianghua\.venv\Lib\site-packages\xtquant\xtdata.py", line 626, in _get_market_data_ex_ori_221207
+    for stock, index, npdatas in ret:
+                                 ^^^
+TypeError: 'NoneType' object is not iterable

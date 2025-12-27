@@ -1,0 +1,14 @@
+pandas
+pyarrow
+xtquant
+streamlit
+sqlalchemy
+psycopg2-binary
+requests
+lightgbm
+xgboost
+scikit-learn
+torch
+apscheduler
+matplotlib
+pytest

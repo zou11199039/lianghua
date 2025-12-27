@@ -1,0 +1,14 @@
+2025-12-26 23:48:53,420 WARNING quant_app: No active strategy configured; using TopGainerStrategy by default
+2025-12-26 23:49:14,144 WARNING quant_app: No active strategy configured; using TopGainerStrategy by default
+2025-12-26 23:51:15,028 WARNING quant_app: No active strategy configured; using TopGainerStrategy by default
+2025-12-26 23:51:15,034 INFO quant_app.order: Paper order simulated: PAPER-1766764275-e1f470 for 600000.SH
+2025-12-26 23:51:15,035 INFO quant_app.order: Order placed: ORD-1 (attempt 0)
+2025-12-26 23:51:15,036 WARNING quant_app.order: Order rejected by risk manager or empty id on attempt 0: RISK_HALT
+2025-12-26 23:51:15,037 ERROR quant_app.order: Order submission failed on attempt 0: Transient error
+Traceback (most recent call last):
+  File "d:\lianghua\src\trading\order_manager.py", line 36, in submit_signal
+    oid = self.trader.execute_signal(signal)
+  File "d:\lianghua\tests\test_order_manager.py", line 19, in execute_signal
+    raise Exception('Transient error')
+Exception: Transient error
+2025-12-26 23:51:15,074 INFO quant_app.order: Order placed: ORD-2 (attempt 1)

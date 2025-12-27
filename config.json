@@ -1,0 +1,32 @@
+{
+    "account": {
+        "qmt_account_id": "REPLACE_WITH_YOUR_ACCOUNT_ID",
+        "mini_qmt_path": "C:\\Program Files (x86)\\国金证券QMT交易端\\userdata_mini",
+        "account_type": "STOCK"
+    },
+    "paths": {
+        "db_path": "db/quant.db",
+        "data_path": "db/market_data",
+        "log_path": "db/logs"
+    },
+    "strategy": {
+        "active_strategies": [
+            "SimpleMA"
+        ],
+        "target_return": 1.0,
+        "max_drawdown": 0.20,
+        "stocks_pool": [
+            "600519.SH",
+            "000858.SZ",
+            "600036.SH"
+        ]
+    },
+    "api_keys": {
+        "gemini_api_key": "YOUR_GEMINI_API_KEY",
+        "dingtalk_token": "YOUR_DINGTALK_ACCESS_TOKEN"
+    },
+    "system": {
+        "log_level": "INFO",
+        "gui_theme": "Dark"
+    }
+}
