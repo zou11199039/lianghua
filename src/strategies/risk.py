@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-import numpy as np
 
 
-def apply_stop_take(price_df: pd.DataFrame, signal: pd.Series, stop_loss: float = 0.05, take_profit: float = 0.1) -> pd.Series:
+def apply_stop_take(
+    price_df: pd.DataFrame,
+    signal: pd.Series,
+    stop_loss: float = 0.05,
+    take_profit: float = 0.1,
+) -> pd.Series:
     """给定原始 signal（0/1），在持仓期间检查是否触发止损/止盈（基于持仓开仓时的成本价，使用 high/low 作为触发价格）。
     返回修改后的 signal（0/1），当触发止损/止盈当天会平仓（signal=0）。
     注意：此实现为简化版本，适用于日频回测。
@@ -16,9 +20,9 @@ def apply_stop_take(price_df: pd.DataFrame, signal: pd.Series, stop_loss: float 
 
     for idx in df.index:
         cur_signal = int(signal.loc[idx])
-        close = df.loc[idx, 'close']
-        high = df.loc[idx, 'high']
-        low = df.loc[idx, 'low']
+        close = df.loc[idx, "close"]
+        high = df.loc[idx, "high"]
+        low = df.loc[idx, "low"]
 
         # entry
         if position == 0 and cur_signal == 1:

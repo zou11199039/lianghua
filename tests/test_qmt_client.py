@@ -1,5 +1,4 @@
 import os
-import time
 import types
 import pytest
 
@@ -25,7 +24,12 @@ def test_ensure_started_uses_startfile_and_detects(tmp_path, monkeypatch):
     # os.startfile may not exist on non-windows; patch it
     monkeypatch.setattr(os, "startfile", fake_startfile, raising=False)
 
-    assert qmt_client.ensure_qmt_started(str(shortcut), process_name="xt_trader.exe", timeout=2) is True
+    assert (
+        qmt_client.ensure_qmt_started(
+            str(shortcut), process_name="xt_trader.exe", timeout=2
+        )
+        is True
+    )
 
 
 def test_download_history_retries_on_exception():
@@ -86,7 +90,9 @@ def test_start_and_context_manager(monkeypatch):
         called["count"] += 1
         return True
 
-    monkeypatch.setattr(qmt_client.QMTClient, "ensure_running", fake_ensure, raising=False)
+    monkeypatch.setattr(
+        qmt_client.QMTClient, "ensure_running", fake_ensure, raising=False
+    )
 
     with qmt_client.QMTClient() as client:
         assert client is not None
@@ -95,9 +101,14 @@ def test_start_and_context_manager(monkeypatch):
 
 
 def test_start_logs_when_not_started(monkeypatch, caplog):
-    monkeypatch.setattr(qmt_client.QMTClient, "ensure_running", lambda self, timeout=1: False, raising=False)
+    monkeypatch.setattr(
+        qmt_client.QMTClient,
+        "ensure_running",
+        lambda self, timeout=1: False,
+        raising=False,
+    )
     client = qmt_client.QMTClient()
-    with caplog.at_level('WARNING'):
+    with caplog.at_level("WARNING"):
         ok = client.start(timeout=1)
     assert ok is False
     assert any("did not start" in r.message for r in caplog.records)

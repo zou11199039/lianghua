@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from abc import ABC, abstractmethod
 
+
 class StrategyBase(ABC):
     def __init__(self, strategy_name, config_params):
         self.strategy_name = strategy_name
@@ -24,7 +25,11 @@ class StrategyBase(ABC):
 
     @abstractmethod
     def generate_signals(self, price_df):
-        """Batch-style API for backtesting: given a price DataFrame, return a Series of 0/1 signals aligned with price_df.index."""
+        """Batch-style API for backtesting.
+
+        Given a price DataFrame, return a Series of 0/1 signals
+        aligned with price_df.index.
+        """
         raise NotImplementedError
 
     def log(self, message):

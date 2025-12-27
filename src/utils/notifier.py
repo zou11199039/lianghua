@@ -3,6 +3,7 @@ import json
 import urllib.request
 import urllib.parse
 
+
 class DingTalkNotifier:
     def __init__(self, token):
         self.token = token
@@ -15,19 +16,14 @@ class DingTalkNotifier:
         if not self.token:
             return
 
-        headers = {'Content-Type': 'application/json'}
-        data = {
-            "msgtype": "text",
-            "text": {
-                "content": content
-            }
-        }
-        
+        headers = {"Content-Type": "application/json"}
+        data = {"msgtype": "text", "text": {"content": content}}
+
         try:
             req = urllib.request.Request(
-                url=self.webhook_url, 
-                data=json.dumps(data).encode('utf-8'), 
-                headers=headers
+                url=self.webhook_url,
+                data=json.dumps(data).encode("utf-8"),
+                headers=headers,
             )
             context = urllib.request.urlopen(req)
             response = context.read()
@@ -43,20 +39,14 @@ class DingTalkNotifier:
         if not self.token:
             return
 
-        headers = {'Content-Type': 'application/json'}
-        data = {
-            "msgtype": "markdown",
-            "markdown": {
-                "title": title,
-                "text": text
-            }
-        }
-        
+        headers = {"Content-Type": "application/json"}
+        data = {"msgtype": "markdown", "markdown": {"title": title, "text": text}}
+
         try:
             req = urllib.request.Request(
-                url=self.webhook_url, 
-                data=json.dumps(data).encode('utf-8'), 
-                headers=headers
+                url=self.webhook_url,
+                data=json.dumps(data).encode("utf-8"),
+                headers=headers,
             )
             context = urllib.request.urlopen(req)
             response = context.read()

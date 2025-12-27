@@ -21,13 +21,13 @@ price：买入、卖出价格，如果不指定默认为最新价
 buy_order_dict = {
     # '600006.SH': {'amount': 1000, 'price': 5},
     # '600000.SH': {'amount': 1500},
-    '000413.SZ': {'amount': 200}
+    "000413.SZ": {"amount": 200}
 }
 sell_order_dict = {
-    '600006.SH': {'volume': 100},
+    "600006.SH": {"volume": 100},
 }
 if subscribe_result != 0 or connect_result != 0:
-    record_log('链接或订阅失败，程序已退出', send=True)
+    record_log("链接或订阅失败，程序已退出", send=True)
     exit()
 msg = f'{"=" * 40} 开始执行批量买入卖出 {"=" * 40}'
 record_log(msg)
@@ -37,14 +37,14 @@ for sell_code, sell_value in sell_order_dict.items():
     # 获取卖出价格
     close_price = get_trading_price(sell_value)
     # 进行卖出
-    sell_stock(xt_trader, user, sell_code, sell_value['volume'], close_price)
+    sell_stock(xt_trader, user, sell_code, sell_value["volume"], close_price)
 
 # 循环进行买入
 for buy_code, buy_value in buy_order_dict.items():
     # 使用其他源
     use_other_data = False
     # 获取下单金额
-    amount = buy_value['amount']
+    amount = buy_value["amount"]
     # 获取下单价格
     open_price = get_trading_price(buy_value)
     if open_price == 0:
@@ -55,7 +55,7 @@ for buy_code, buy_value in buy_order_dict.items():
             open_price = get_base_data(buy_code)
             use_other_data = True
         else:
-            open_price = float(open_price['最新价'])
+            open_price = float(open_price["最新价"])
     else:
         fix_price = True
     # 计算下单量
@@ -76,5 +76,8 @@ for buy_code, buy_value in buy_order_dict.items():
                 buy_stock(xt_trader, user, buy_code, order_volume, price=0)
 
     else:
-        msg = f'=====买入失败=====\n股票代码：{buy_code}\n' + f"{buy_code}下单量不满足最小购买"
+        msg = (
+            f"=====买入失败=====\n股票代码：{buy_code}\n"
+            + f"{buy_code}下单量不满足最小购买"
+        )
         record_log(msg, send=True)

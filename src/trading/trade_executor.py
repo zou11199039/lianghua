@@ -3,16 +3,17 @@ import time
 from xtquant import xttrader, xtconstant
 from xtquant.xttype import StockAccount
 
+
 class TradeExecutor:
     def __init__(self, account_id, mini_qmt_path, max_drawdown=0.2):
         self.account_id = account_id
         self.mini_qmt_path = mini_qmt_path
         self.max_drawdown = max_drawdown
         self.session_id = int(time.time())
-        
+
         self.xt_trader = xttrader.XtQuantTrader(mini_qmt_path, self.session_id)
         self.account = StockAccount(account_id)
-        
+
         self.initial_equity = None
 
         # receipt handlers: functions that accept (order_id, status, info)
@@ -31,6 +32,7 @@ class TradeExecutor:
                 # handler errors should not kill the executor
                 try:
                     import traceback
+
                     traceback.print_exc()
                 except Exception:
                     pass
@@ -46,22 +48,26 @@ class TradeExecutor:
         """Start background receipt listener to forward receipts to OrderManager."""
         try:
             from src.trading.receipt_listener import ReceiptListener
+
             if self.receipt_listener is None:
-                self.receipt_listener = ReceiptListener(self, poll_interval=poll_interval, fetch_func=fetch_func)
+                self.receipt_listener = ReceiptListener(
+                    self, poll_interval=poll_interval, fetch_func=fetch_func
+                )
                 self.receipt_listener.start()
         except Exception:
             # Keep tolerant if environment doesn't support listener
             import traceback
+
             traceback.print_exc()
 
     def stop_receipt_listener(self):
-        if getattr(self, 'receipt_listener', None):
+        if getattr(self, "receipt_listener", None):
             try:
                 self.receipt_listener.stop()
             except Exception:
                 pass
             self.receipt_listener = None
-        
+
     def start(self):
         """Connect to QMT and start trading session."""
         self.xt_trader.start()
@@ -84,19 +90,22 @@ class TradeExecutor:
         Check if current drawdown exceeds limit.
         """
         if self.initial_equity is None:
-            return True # Not initialized yet
-        
+            return True  # Not initialized yet
+
         assets = self.get_assets()
         if not assets:
-            return False # Conservative
-            
+            return False  # Conservative
+
         current_equity = assets.total_asset
         drawdown = 1.0 - (current_equity / self.initial_equity)
-        
+
         if drawdown > self.max_drawdown:
-            print(f"RISK ALERT: Max drawdown reached ({drawdown*100:.2f}%). Trading halted.")
+            print(
+                f"RISK ALERT: Max drawdown reached ({drawdown*100:.2f}%). "
+                "Trading halted."
+            )
             return False
-        
+
         return True
 
     def execute_signal(self, signal):
@@ -107,13 +116,15 @@ class TradeExecutor:
         if not self.check_risk_ok():
             return "RISK_HALT"
 
-        code = signal.get('code')
-        volume = int(signal.get('volume', 100))
-        price = float(signal.get('price', 0))
-        signal_type = signal.get('signal_type', '').upper()
-        
-        action_type = xtconstant.STOCK_BUY if signal_type == 'BUY' else xtconstant.STOCK_SELL
-        
+        code = signal.get("code")
+        volume = int(signal.get("volume", 100))
+        price = float(signal.get("price", 0))
+        signal_type = signal.get("signal_type", "").upper()
+
+        action_type = (
+            xtconstant.STOCK_BUY if signal_type == "BUY" else xtconstant.STOCK_SELL
+        )
+
         # Simple order (FIX Price)
         order_id = self.xt_trader.order_stock(
             self.account,
@@ -122,10 +133,10 @@ class TradeExecutor:
             volume,
             xtconstant.FIX_PRICE,
             price,
-            signal.get('source', 'auto'),
-            signal.get('source', 'auto')
+            signal.get("source", "auto"),
+            signal.get("source", "auto"),
         )
-        
+
         return order_id
 
     def stop(self):

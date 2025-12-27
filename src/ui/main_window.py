@@ -1,16 +1,28 @@
 # -*- coding: utf-8 -*-
 import sys
-import os
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
-                             QHBoxLayout, QPushButton, QTextEdit, QLabel, QGroupBox, QTableWidget, QTableWidgetItem)
-from PyQt6.QtCore import QTimer, Qt, QThread, pyqtSignal
+from PyQt6.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QTextEdit,
+    QLabel,
+    QGroupBox,
+    QTableWidget,
+)
+from PyQt6.QtCore import QThread, pyqtSignal
 from datetime import datetime
 
 # Import backend modules
-# (Assuming main.py sets up paths correctly, or we use relative imports if run as module)
+# (Assuming main.py sets up paths correctly,
+# or we use relative imports if run as module)
+
 
 class WorkerThread(QThread):
     """Background thread to run the trading loop or long tasks."""
+
     log_signal = pyqtSignal(str)
 
     def __init__(self, system_controller):
@@ -24,7 +36,7 @@ class WorkerThread(QThread):
         while self.running:
             # check schedule
             # if time matches, run strategy
-            self.sleep(1) # simple sleep for now
+            self.sleep(1)  # simple sleep for now
 
     def stop(self):
         self.running = False
@@ -35,40 +47,40 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Enterprise QMT Quant System")
         self.resize(1000, 700)
-        
+
         # Central Widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        
+
         # Main Layout
         main_layout = QHBoxLayout(central_widget)
-        
+
         # Left Panel (Controls & Status)
         left_panel = QVBoxLayout()
-        
+
         # 1. Control Group
         control_group = QGroupBox("System Control")
         control_layout = QVBoxLayout()
         self.btn_start = QPushButton("Start System")
         self.btn_stop = QPushButton("Stop System")
         self.btn_run_strategy = QPushButton("Force Run Strategy")
-        
+
         self.btn_start.clicked.connect(self.start_system)
         self.btn_stop.clicked.connect(self.stop_system)
         self.btn_run_strategy.clicked.connect(self.force_run)
-        
+
         control_layout.addWidget(self.btn_start)
         control_layout.addWidget(self.btn_stop)
         control_layout.addWidget(self.btn_run_strategy)
         control_group.setLayout(control_layout)
-        
+
         # 2. Asset Display
         asset_group = QGroupBox("Account Assets")
         asset_layout = QVBoxLayout()
         self.lbl_total_asset = QLabel("Total Asset: --")
         self.lbl_cash = QLabel("Cash: --")
         self.lbl_market_val = QLabel("Market Value: --")
-        
+
         asset_layout.addWidget(self.lbl_total_asset)
         asset_layout.addWidget(self.lbl_cash)
         asset_layout.addWidget(self.lbl_market_val)
@@ -77,10 +89,10 @@ class MainWindow(QMainWindow):
         left_panel.addWidget(control_group)
         left_panel.addWidget(asset_group)
         left_panel.addStretch()
-        
+
         # Right Panel (Logs & Data)
         right_panel = QVBoxLayout()
-        
+
         # 3. Log Window
         log_group = QGroupBox("System Logs")
         log_layout = QVBoxLayout()
@@ -88,7 +100,7 @@ class MainWindow(QMainWindow):
         self.log_text.setReadOnly(True)
         log_layout.addWidget(self.log_text)
         log_group.setLayout(log_layout)
-        
+
         # 4. Signal/Position Table (Placeholder)
         table_group = QGroupBox("Active Positions / Signals")
         table_layout = QVBoxLayout()
@@ -97,16 +109,16 @@ class MainWindow(QMainWindow):
         self.table.setHorizontalHeaderLabels(["Code", "Signal/Pos", "Price", "Time"])
         table_layout.addWidget(self.table)
         table_group.setLayout(table_layout)
-        
+
         right_panel.addWidget(table_group, 1)
         right_panel.addWidget(log_group, 1)
-        
+
         main_layout.addLayout(left_panel, 1)
         main_layout.addLayout(right_panel, 3)
-        
+
         # Status Bar
         self.statusBar().showMessage("System Ready")
-        
+
         # Internal State
         self.worker = None
 
@@ -136,6 +148,7 @@ class MainWindow(QMainWindow):
     def force_run(self):
         self.log("Manually triggering strategy run...")
         # TODO: Call backend logic
+
 
 def launch_gui():
     app = QApplication(sys.argv)
