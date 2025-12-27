@@ -1,0 +1,19 @@
+{
+  "dingtalk_token": "your_dingtalk_access_token_here",
+  "gemini_api_key": "your_gemini_api_key_here",
+  "db": {
+    "type": "sqlite",  
+    "sqlite_path": "db/quant.db",
+    "postgres": {
+      "host": "localhost",
+      "port": 5432,
+      "user": "youruser",
+      "password": "yourpassword",
+      "database": "quantdb"
+    }
+  },
+  "qmt": {
+    "shortcut_path": "C:/Users/you/Desktop/中航证券QMT实盘-交易端.lnk",
+    "process_name": "xt_trader.exe"
+  }
+}
